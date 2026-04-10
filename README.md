@@ -35,3 +35,19 @@ An AI-powered system that detects emergencies (fire, sound, panic alerts) and se
 cd backend
 npm install
 node server.js
+
+⚙️ How It Works
+Detects emergencies using AI (camera/sensors)
+Sends alert to backend system
+Displays alert on dashboard
+Notifies staff instantly
+🌍 Applications
+Hotels & Resorts
+Hospitals
+Colleges & Schools
+Malls & Public Places
+🔮 Future Scope
+Sound detection (screams, gunshots)
+Smart evacuation system
+Integration with emergency services
+AI-based risk prediction
