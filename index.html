@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Crisis Response Dashboard</title>
+
+<style>
+body {
+    font-family: Arial, sans-serif;
+    background: #0f172a;
+    color: white;
+    text-align: center;
+    margin: 0;
+}
+
+/* Header */
+header {
+    background: #dc2626;
+    padding: 15px;
+    font-size: 24px;
+    font-weight: bold;
+}
+
+/* Container */
+.container {
+    padding: 20px;
+}
+
+/* Button */
+button {
+    background: #ef4444;
+    color: white;
+    border: none;
+    padding: 15px 25px;
+    font-size: 18px;
+    border-radius: 10px;
+    cursor: pointer;
+    margin: 20px;
+}
+
+button:hover {
+    background: #b91c1c;
+}
+
+/* Cards */
+.card {
+    background: #1e293b;
+    padding: 15px;
+    margin: 10px auto;
+    width: 80%;
+    border-radius: 10px;
+    text-align: left;
+    box-shadow: 0 0 10px rgba(0,0,0,0.5);
+}
+
+/* Alert colors */
+.fire { border-left: 5px solid orange; }
+.panic { border-left: 5px solid red; }
+.sound { border-left: 5px solid yellow; }
+
+/* Analytics */
+.analytics {
+    margin-top: 20px;
+    font-size: 18px;
+}
+
+/* Map */
+iframe {
+    border-radius: 10px;
+    margin-top: 10px;
+}
+</style>
+</head>
+
+<body>
+
+<header>🚨 Crisis Response Dashboard</header>
+
+<div class="container">
+
+<button onclick="panic()">🚨 Emergency Panic Button</button>
+
+<h2>📊 Live Alerts</h2>
+<div id="alerts"></div>
+
+<div class="analytics">
+<p id="total"></p>
+</div>
+
+<h2>🗺️ Location</h2>
+<iframe width="300" height="200"
+src="https://www.google.com/maps?q=Lucknow&output=embed"></iframe>
+
+</div>
+
+<script type="module">
+import { sendAlert, listenAlerts } from './firebase.js';
+
+window.panic = () => {
+    sendAlert({
+        type: "Panic",
+        location: "Room 101",
+        time: new Date().toLocaleTimeString()
+    });
+};
+
+function notify(msg) {
+    if (Notification.permission === "granted") {
+        new Notification(msg);
+    } else {
+        Notification.requestPermission();
+    }
+}
+
+listenAlerts((alerts) => {
+    const container = document.getElementById("alerts");
+    container.innerHTML = "";
+
+    alerts.forEach(a => {
+        const div = document.createElement("div");
+        div.classList.add("card");
+
+        if (a.type === "Fire") div.classList.add("fire");
+        if (a.type === "Panic") div.classList.add("panic");
+        if (a.type === "Sound") div.classList.add("sound");
+
+        div.innerHTML = `
+            <strong>🚨 ${a.type}</strong><br>
+            📍 ${a.location}<br>
+            ⏰ ${a.time}
+        `;
+
+        container.appendChild(div);
+    });
+
+    document.getElementById("total").innerText =
+        "Total Alerts: " + alerts.length;
+
+    if (alerts.length > 0) {
+        notify("🚨 New Alert Received!");
+    }
+});
+</script>
+
+</body>
+</html>
